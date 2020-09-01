@@ -6,10 +6,10 @@
  *
  * @section LICENSE
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
  *
  * @section DESCRIPTION
  *
@@ -52,8 +52,8 @@ public class GridPanel extends JPanel implements MouseListener {
    *
    */
   public void updateGame() {
-    for (int i = 0; i < this.readGrid.length; i ++) {
-      for (int j = 0; j < this.readGrid[0].length; j ++) {
+    for (int i = 0; i < this.readGrid.length; i++) {
+      for (int j = 0; j < this.readGrid[0].length; j++) {
         this.applyRule(i, j);
       }
     }
@@ -61,7 +61,7 @@ public class GridPanel extends JPanel implements MouseListener {
     // After every generation, we need to replace the 
     // grid we currently see with the one we just updated.
     this.readGrid = cloneArray(this.writeGrid);
-    this.generations ++;
+    this.generations++;
   }
 
   /**
@@ -74,8 +74,8 @@ public class GridPanel extends JPanel implements MouseListener {
 
     Graphics2D g2 = (Graphics2D) g;
 
-    for (int i = 0; i < this.readGrid.length; i ++) {
-      for (int j = 0; j < this.readGrid[0].length; j ++) {
+    for (int i = 0; i < this.readGrid.length; i++) {
+      for (int j = 0; j < this.readGrid[0].length; j++) {
         g2.setColor(this.readGrid[i][j] == 1 ? Color.RED : Color.WHITE);
         g2.fillRect(i * this.gridSize, j * this.gridSize, this.gridSize, this.gridSize);
       }
@@ -108,7 +108,32 @@ public class GridPanel extends JPanel implements MouseListener {
 
     this.readGrid = new int[this.gameOfLife.getScreenWidth() / this.gridSize][this.gameOfLife.getScreenHeight() / this.gridSize];
     this.writeGrid = new int[this.gameOfLife.getScreenWidth() / this.gridSize][this.gameOfLife.getScreenHeight() / this.gridSize];
-    this.randomize();
+  }
+
+  /**
+   *
+   */
+  public void randomizeGrid() {
+    for (int i = 0; i < this.readGrid.length; i++) {
+      for (int j = 0; j < this.readGrid[0].length; j++) {
+        readGrid[i][j] = Math.random() > RANDOMIZE_FACTOR ? 1 : 0;
+      }
+    }
+
+    this.writeGrid = cloneArray(this.readGrid);
+  }
+
+  /**
+   *
+   */
+  public void clearGrid() {
+    for (int i = 0; i < this.readGrid.length; i++) {
+      for (int j = 0; j < this.readGrid[0].length; j++) {
+        readGrid[i][j] = 0;
+      }
+    }
+
+    this.writeGrid = cloneArray(this.readGrid);
   }
 
   /**
@@ -120,7 +145,7 @@ public class GridPanel extends JPanel implements MouseListener {
   public static int[][] cloneArray(int[][] src) {
     int length = src.length;
     int[][] target = new int[length][src[0].length];
-    for (int i = 0; i < length; i ++) {
+    for (int i = 0; i < length; i++) {
       System.arraycopy(src[i], 0, target[i], 0, src[i].length);
     }
     return target;
@@ -192,7 +217,7 @@ public class GridPanel extends JPanel implements MouseListener {
     if (this.applyToCornerCells(i, j, isTopLeft, isTopRight, isBottomLeft, isBottomRight)) {
       return;
     }
-    
+
     if (this.applyToEdgeCells(i, j, isLeft, isRight, isTop, isBottom)) {
       return;
     }
@@ -282,17 +307,6 @@ public class GridPanel extends JPanel implements MouseListener {
     return isLeft || isRight || isTop || isBottom;
   }
 
-  /**
-   *
-   */
-  private void randomize() {
-    for (int i = 0; i < this.readGrid.length; i ++) {
-      for (int j = 0; j < this.readGrid[0].length; j ++) {
-        readGrid[i][j] = Math.random() > RANDOMIZE_FACTOR ? 1 : 0;
-      }
-    }
-  }
-  
   public int getGeneration() {
     return this.generations;
   }
