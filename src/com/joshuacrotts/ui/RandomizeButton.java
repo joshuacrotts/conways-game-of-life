@@ -20,7 +20,7 @@ public class RandomizeButton extends JButton implements ActionListener {
   private final GameOfLife gameOfLife;
   
   public RandomizeButton(GameOfLife gol) {
-    super("RANDOMIZE GRID");
+    super("RANDOMIZE");
     this.gameOfLife = gol;
     
     super.addActionListener(this);

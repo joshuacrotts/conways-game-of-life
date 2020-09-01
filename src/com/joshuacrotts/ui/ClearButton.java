@@ -20,7 +20,7 @@ public class ClearButton extends JButton implements ActionListener {
   private final GameOfLife gameOfLife;
   
   public ClearButton(GameOfLife gol) {
-    super("CLEAR GRID");
+    super("CLEAR");
     this.gameOfLife = gol;
     
     super.addActionListener(this);

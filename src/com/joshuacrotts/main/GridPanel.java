@@ -310,4 +310,13 @@ public class GridPanel extends JPanel implements MouseListener {
   public int getGeneration() {
     return this.generations;
   }
+  
+  public int[][] getGrid() {
+    return this.readGrid;
+  }
+  
+  public void setGrid(int[][] grid) {
+    this.readGrid = grid;
+    this.writeGrid = cloneArray(this.readGrid);
+  }
 }
