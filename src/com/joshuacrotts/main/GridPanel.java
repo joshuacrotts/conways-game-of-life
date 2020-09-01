@@ -1,7 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * @file GridPanel.java
+ * @author Joshua Crotts
+ * @date August 30 2020
+ * @version 1.0
+ *
+ * @section LICENSE
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * @section DESCRIPTION
+ *
  */
 package com.joshuacrotts.main;
 
@@ -10,33 +21,31 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
 
-/**
- *
- * @author joshuacrotts
- */
 public class GridPanel extends JPanel implements MouseListener {
 
+  // Parent game panel.
   private final GameOfLife gameOfLife;
 
-  private final int GRID_SIZE = 16;
+  // Randomization factor (how populated the grid is upon startup.
   private final double RANDOMIZE_FACTOR = 0.90;
+
+  private final int DEFAULT_GRID_SIZE = 6;
 
   private int[][] readGrid;
   private int[][] writeGrid;
+  private int gridSize;
 
   private int generations;
 
   public GridPanel(GameOfLife life) {
     this.gameOfLife = life;
-
-    // Check to make sure the GRID SIZE is a multiple of the dimension.
-    this.readGrid = new int[life.getScreenWidth() / GRID_SIZE][life.getScreenHeight() / GRID_SIZE];
-    this.writeGrid = new int[life.getScreenWidth() / GRID_SIZE][life.getScreenHeight() / GRID_SIZE];
+    this.gridSize = this.DEFAULT_GRID_SIZE;
 
     super.addMouseListener(this);
-    this.randomize();
   }
 
   /**
@@ -52,6 +61,7 @@ public class GridPanel extends JPanel implements MouseListener {
     // After every generation, we need to replace the 
     // grid we currently see with the one we just updated.
     this.readGrid = cloneArray(this.writeGrid);
+    this.generations ++;
   }
 
   /**
@@ -67,18 +77,60 @@ public class GridPanel extends JPanel implements MouseListener {
     for (int i = 0; i < this.readGrid.length; i ++) {
       for (int j = 0; j < this.readGrid[0].length; j ++) {
         g2.setColor(this.readGrid[i][j] == 1 ? Color.RED : Color.WHITE);
-        g2.fillRect(i * GRID_SIZE, j * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        g2.fillRect(i * this.gridSize, j * this.gridSize, this.gridSize, this.gridSize);
       }
     }
 
     this.drawGrid(g2);
   }
 
+  /**
+   *
+   * @param gridSize
+   * @throws IllegalArgumentException
+   */
+  public void validateGridSize(int gridSize) throws IllegalArgumentException {
+    try {
+      if (this.gameOfLife.getScreenWidth() % gridSize != 0
+              || this.gameOfLife.getScreenHeight() % gridSize != 0) {
+        this.gameOfLife.stopGame();
+        throw new IllegalArgumentException("Error, your grid size " + gridSize
+                + " should be a multiple of the panel size: " + this.getWidth()
+                + ", " + this.getHeight());
+      }
+    } catch (IllegalArgumentException ex) {
+      Logger.getLogger(GridPanel.class.getName()).log(Level.SEVERE, null, ex);
+      System.exit(1);
+    }
+
+    // Set the grid size then instantiate the arrays.
+    this.gridSize = gridSize;
+
+    this.readGrid = new int[this.gameOfLife.getScreenWidth() / this.gridSize][this.gameOfLife.getScreenHeight() / this.gridSize];
+    this.writeGrid = new int[this.gameOfLife.getScreenWidth() / this.gridSize][this.gameOfLife.getScreenHeight() / this.gridSize];
+    this.randomize();
+  }
+
+  /**
+   * Clones the provided array
+   *
+   * @param src
+   * @return a new clone of the provided array
+   */
+  public static int[][] cloneArray(int[][] src) {
+    int length = src.length;
+    int[][] target = new int[length][src[0].length];
+    for (int i = 0; i < length; i ++) {
+      System.arraycopy(src[i], 0, target[i], 0, src[i].length);
+    }
+    return target;
+  }
+
   @Override
   public void mouseClicked(MouseEvent e) {
     if (this.gameOfLife.isPaused()) {
-      int iTile = e.getX() / GRID_SIZE;
-      int jTile = e.getY() / GRID_SIZE;
+      int iTile = e.getX() / this.gridSize;
+      int jTile = e.getY() / this.gridSize;
 
       if (this.readGrid[iTile][jTile] == 1) {
         this.readGrid[iTile][jTile] = 0;
@@ -105,20 +157,19 @@ public class GridPanel extends JPanel implements MouseListener {
   }
 
   /**
-   * 
-   * @param g2 
+   *
+   * @param g2
    */
   private void drawGrid(Graphics2D g2) {
     g2.setColor(Color.GRAY);
-
     // Vertical lines.
-    for (int i = 0; i <= this.gameOfLife.getScreenWidth(); i += GRID_SIZE) {
-      g2.drawLine(i, 0, i, this.gameOfLife.getScreenHeight());
+    for (int i = 0; i <= super.getWidth(); i += this.gridSize) {
+      g2.drawLine(i, 0, i, super.getHeight());
     }
 
     // Horizontal lines.
-    for (int i = 0; i <= this.gameOfLife.getScreenHeight(); i += GRID_SIZE) {
-      g2.drawLine(0, i, this.gameOfLife.getScreenWidth(), i);
+    for (int i = 0; i <= super.getHeight(); i += this.gridSize) {
+      g2.drawLine(0, i, super.getWidth(), i);
     }
   }
 
@@ -138,43 +189,11 @@ public class GridPanel extends JPanel implements MouseListener {
     boolean isBottomLeft = isLeft && isBottom;
     boolean isBottomRight = isBottom && isRight;
 
-    int left, right, top, bottom, bLeft, bRight, tLeft, tRight;
-
-    // Handle the special cases first.
-    if (isTopLeft) {
-      tLeft = readGrid[i + 1][j] + readGrid[i + 1][j + 1] + readGrid[i][j + 1];
-      this.applyToCell(tLeft, i, j);
-    } else if (isTopRight) {
-      tRight = readGrid[i + 1][j] + readGrid[i][j - 1] + readGrid[i + 1][j - 1];
-      this.applyToCell(tRight, i, j);
-    } else if (isBottomLeft) {
-      bLeft = readGrid[i - 1][j] + readGrid[i - 1][j + 1] + readGrid[i][j + 1];
-      this.applyToCell(bLeft, i, j);
-    } else if (isBottomRight) {
-      bRight = readGrid[i][j - 1] + readGrid[i - 1][j - 1] + readGrid[i - 1][j];
-      this.applyToCell(bRight, i, j);
-    }
-
-    if (isTopLeft || isTopRight || isBottomLeft || isBottomRight) {
+    if (this.applyToCornerCells(i, j, isTopLeft, isTopRight, isBottomLeft, isBottomRight)) {
       return;
     }
-
-    // Now handle the more intermediary cases (5 cells)
-    if (isLeft) {
-      left = readGrid[i - 1][j] + readGrid[i - 1][j + 1] + readGrid[i][j + 1] + readGrid[i + 1][j + 1] + readGrid[i + 1][j];
-      this.applyToCell(left, i, j);
-    } else if (isRight) {
-      right = readGrid[i - 1][j] + readGrid[i - 1][j - 1] + readGrid[i][j - 1] + readGrid[i + 1][j - 1] + readGrid[i + 1][j];
-      this.applyToCell(right, i, j);
-    } else if (isTop) {
-      top = readGrid[i][j - 1] + readGrid[i + 1][j - 1] + readGrid[i + 1][j] + readGrid[i + 1][j + 1] + readGrid[i][j + 1];
-      this.applyToCell(top, i, j);
-    } else if (isBottom) {
-      bottom = readGrid[i][j - 1] + readGrid[i - 1][j - 1] + readGrid[i - 1][j] + readGrid[i - 1][j + 1] + readGrid[i][j + 1];
-      this.applyToCell(bottom, i, j);
-    }
-
-    if (isTop || isLeft || isRight || isBottom) {
+    
+    if (this.applyToEdgeCells(i, j, isLeft, isRight, isTop, isBottom)) {
       return;
     }
 
@@ -184,10 +203,10 @@ public class GridPanel extends JPanel implements MouseListener {
   }
 
   /**
-   * 
+   *
    * @param sum
    * @param i
-   * @param j 
+   * @param j
    */
   private void applyToCell(int sum, int i, int j) {
     if (this.readGrid[i][j] == 1) {
@@ -207,6 +226,64 @@ public class GridPanel extends JPanel implements MouseListener {
 
   /**
    *
+   * @param i
+   * @param j
+   * @param isTopLeft
+   * @param isTopRight
+   * @param isBottomLeft
+   * @param isBottomRight
+   * @return
+   */
+  private boolean applyToCornerCells(int i, int j, boolean isTopLeft, boolean isTopRight,
+          boolean isBottomLeft, boolean isBottomRight) {
+    if (isTopLeft) {
+      int tLeft = readGrid[i + 1][j] + readGrid[i + 1][j + 1] + readGrid[i][j + 1];
+      this.applyToCell(tLeft, i, j);
+    } else if (isTopRight) {
+      int tRight = readGrid[i + 1][j] + readGrid[i][j - 1] + readGrid[i + 1][j - 1];
+      this.applyToCell(tRight, i, j);
+    } else if (isBottomLeft) {
+      int bLeft = readGrid[i - 1][j] + readGrid[i - 1][j + 1] + readGrid[i][j + 1];
+      this.applyToCell(bLeft, i, j);
+    } else if (isBottomRight) {
+      int bRight = readGrid[i][j - 1] + readGrid[i - 1][j - 1] + readGrid[i - 1][j];
+      this.applyToCell(bRight, i, j);
+    }
+
+    return isTopLeft || isTopRight || isBottomLeft || isBottomRight;
+  }
+
+  /**
+   *
+   * @param i
+   * @param j
+   * @param isLeft
+   * @param isRight
+   * @param isTop
+   * @param isBottom
+   * @return
+   */
+  private boolean applyToEdgeCells(int i, int j, boolean isLeft, boolean isRight,
+          boolean isTop, boolean isBottom) {
+    // Now handle the more intermediary cases (5 cells)
+    if (isLeft) {
+      int left = readGrid[i - 1][j] + readGrid[i - 1][j + 1] + readGrid[i][j + 1] + readGrid[i + 1][j + 1] + readGrid[i + 1][j];
+      this.applyToCell(left, i, j);
+    } else if (isRight) {
+      int right = readGrid[i - 1][j] + readGrid[i - 1][j - 1] + readGrid[i][j - 1] + readGrid[i + 1][j - 1] + readGrid[i + 1][j];
+      this.applyToCell(right, i, j);
+    } else if (isTop) {
+      int top = readGrid[i][j - 1] + readGrid[i + 1][j - 1] + readGrid[i + 1][j] + readGrid[i + 1][j + 1] + readGrid[i][j + 1];
+      this.applyToCell(top, i, j);
+    } else if (isBottom) {
+      int bottom = readGrid[i][j - 1] + readGrid[i - 1][j - 1] + readGrid[i - 1][j] + readGrid[i - 1][j + 1] + readGrid[i][j + 1];
+      this.applyToCell(bottom, i, j);
+    }
+    return isLeft || isRight || isTop || isBottom;
+  }
+
+  /**
+   *
    */
   private void randomize() {
     for (int i = 0; i < this.readGrid.length; i ++) {
@@ -215,19 +292,8 @@ public class GridPanel extends JPanel implements MouseListener {
       }
     }
   }
-
-  /**
-   * Clones the provided array
-   *
-   * @param src
-   * @return a new clone of the provided array
-   */
-  public static int[][] cloneArray(int[][] src) {
-    int length = src.length;
-    int[][] target = new int[length][src[0].length];
-    for (int i = 0; i < length; i ++) {
-      System.arraycopy(src[i], 0, target[i], 0, src[i].length);
-    }
-    return target;
+  
+  public int getGeneration() {
+    return this.generations;
   }
 }
