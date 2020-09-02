@@ -20,13 +20,14 @@ import com.joshuacrotts.ui.model.PopUpMenuController;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
 
-public class GridPanel extends JPanel implements MouseListener {
+public class GridPanel extends JPanel {
 
   // Parent game panel.
   private final GameOfLife gameOfLife;
@@ -56,7 +57,7 @@ public class GridPanel extends JPanel implements MouseListener {
 
     this.popup = new PopUpMenuController(this);
 
-    super.addMouseListener(this);
+    super.addMouseListener(new GridPanelListener(this.gameOfLife));
   }
 
   /**
@@ -160,36 +161,6 @@ public class GridPanel extends JPanel implements MouseListener {
       System.arraycopy(src[i], 0, target[i], 0, src[i].length);
     }
     return target;
-  }
-
-  @Override
-  public void mouseClicked(MouseEvent e) {
-    if (this.gameOfLife.isPaused()) {
-      int iTile = e.getX() / this.gridSize;
-      int jTile = e.getY() / this.gridSize;
-
-      if (this.readGrid[iTile][jTile] == 1) {
-        this.readGrid[iTile][jTile] = 0;
-      } else {
-        this.readGrid[iTile][jTile] = 1;
-      }
-    }
-  }
-
-  @Override
-  public void mousePressed(MouseEvent _e) {
-  }
-
-  @Override
-  public void mouseReleased(MouseEvent _e) {
-  }
-
-  @Override
-  public void mouseEntered(MouseEvent _e) {
-  }
-
-  @Override
-  public void mouseExited(MouseEvent _e) {
   }
 
   /**
@@ -364,5 +335,33 @@ public class GridPanel extends JPanel implements MouseListener {
 
   public void setDrawGrid(boolean b) {
     this.shouldDrawGrid = b;
+  }
+
+  /**
+   * 
+   */
+  private class GridPanelListener extends MouseAdapter {
+
+    private final GameOfLife gameOfLife;
+    
+    public GridPanelListener(GameOfLife gameOfLife) {
+      this.gameOfLife = gameOfLife;
+    }
+    
+    @Override
+    public void mouseClicked(MouseEvent e) {
+      if (this.gameOfLife.isPaused()) {
+        GridPanel gp = this.gameOfLife.getParentPanel().getGridPanel();
+        int iTile = e.getX() / gp.getGridSize();
+        int jTile = e.getY() / gp.getGridSize();
+        int[][] readGrid = gp.getGrid();
+          
+        if (readGrid[iTile][jTile] == 1) {
+          readGrid[iTile][jTile] = 0;
+        } else {
+          readGrid[iTile][jTile] = 1;
+        }
+      }
+    }
   }
 }
