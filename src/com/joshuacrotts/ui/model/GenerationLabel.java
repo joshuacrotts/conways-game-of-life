@@ -14,7 +14,7 @@
  * @section DESCRIPTION
  *
  */
-package com.joshuacrotts.ui;
+package com.joshuacrotts.ui.model;
 
 import com.joshuacrotts.main.GameOfLife;
 import javax.swing.JLabel;

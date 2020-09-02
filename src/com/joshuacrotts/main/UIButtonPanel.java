@@ -16,18 +16,18 @@
  */
 package com.joshuacrotts.main;
 
-import com.joshuacrotts.ui.ClearButton;
-import com.joshuacrotts.ui.FramerateChanger;
-import com.joshuacrotts.ui.GenerationLabel;
-import com.joshuacrotts.ui.PauseButton;
-import com.joshuacrotts.ui.RandomizeButton;
-import com.joshuacrotts.ui.ResumeButton;
-import com.joshuacrotts.ui.SaveLoadController;
+import com.joshuacrotts.ui.model.ClearButton;
+import com.joshuacrotts.ui.controller.FramerateChangeController;
+import com.joshuacrotts.ui.model.GenerationLabel;
+import com.joshuacrotts.ui.model.PauseButton;
+import com.joshuacrotts.ui.model.RandomizeButton;
+import com.joshuacrotts.ui.model.ResumeButton;
+import com.joshuacrotts.ui.controller.SaveLoadController;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import javax.swing.JPanel;
+import javax.swing.JToolBar;
 
-public class UIButtonPanel extends JPanel {
+public class UIButtonPanel extends JToolBar {
 
   private final GameOfLife gameOfLife;
 
@@ -36,7 +36,7 @@ public class UIButtonPanel extends JPanel {
   private final ResumeButton resumeButton;
   private final RandomizeButton randomizeButton;
   private final ClearButton clearButton;
-  private final FramerateChanger framerateSlider;
+  private final FramerateChangeController framerateSlider;
   private final GenerationLabel generationLabel;
 
   private static final int ROWS = 1;
@@ -57,9 +57,10 @@ public class UIButtonPanel extends JPanel {
     this.resumeButton = new ResumeButton(this.gameOfLife);
     this.randomizeButton = new RandomizeButton(this.gameOfLife);
     this.clearButton = new ClearButton(this.gameOfLife);
-    this.framerateSlider = new FramerateChanger(this.gameOfLife);
+    this.framerateSlider = new FramerateChangeController(this.gameOfLife);
     this.generationLabel = new GenerationLabel(this.gameOfLife);
 
+    super.setFloatable(false);
     super.setLayout(new GridLayout(ROWS, COLS)); // set JPanel's layout
     super.add(this.saveLoadController, 0, SAVE_LOAD_CONTROLLER_COL);
     super.add(this.pauseButton, 0, PAUSE_BUTTON_COL);

@@ -1,7 +1,7 @@
 /**
- * @file FramerateChanger.java
+ * @file FramerateChangerController.java
  * @author Joshua Crotts
- * @date August 30 2020
+ * @date September 1 2020
  * @version 1.0
  *
  * @section LICENSE
@@ -14,7 +14,7 @@
  * @section DESCRIPTION
  *
  */
-package com.joshuacrotts.ui;
+package com.joshuacrotts.ui.controller;
 
 import com.joshuacrotts.main.GameOfLife;
 import java.awt.GridBagConstraints;
@@ -25,7 +25,7 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class FramerateChanger extends JPanel implements ChangeListener {
+public class FramerateChangeController extends JPanel implements ChangeListener {
 
   private final GameOfLife gameOfLife;
 
@@ -41,16 +41,16 @@ public class FramerateChanger extends JPanel implements ChangeListener {
   private static final int FRAMERATE_MINIMUM = 0;
   private static final int FRAMERATE_MAXIMUM = 1000;
 
-  public FramerateChanger(GameOfLife gol) {
+  public FramerateChangeController(GameOfLife gol) {
     this.gameOfLife = gol;
     this.slider = new JSlider();
     this.changeLabel = new JLabel("Framerate (MS)");
     this.currentLabel = new JLabel("Current MS: " + this.gameOfLife.getFramerate());
-    this.slider.setMinimum(FramerateChanger.FRAMERATE_MINIMUM);
-    this.slider.setMaximum(FramerateChanger.FRAMERATE_MAXIMUM);
+    this.slider.setMinimum(FramerateChangeController.FRAMERATE_MINIMUM);
+    this.slider.setMaximum(FramerateChangeController.FRAMERATE_MAXIMUM);
     this.slider.setValue(this.gameOfLife.getFramerate());
-    this.slider.setMajorTickSpacing(FramerateChanger.MAJOR_TICK_SPACE);
-    this.slider.setMinorTickSpacing(FramerateChanger.MINOR_TICK_SPACE);
+    this.slider.setMajorTickSpacing(FramerateChangeController.MAJOR_TICK_SPACE);
+    this.slider.setMinorTickSpacing(FramerateChangeController.MINOR_TICK_SPACE);
     this.slider.addChangeListener(this);
 
     super.setLayout(new GridBagLayout());

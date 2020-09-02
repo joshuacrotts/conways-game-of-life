@@ -1,7 +1,7 @@
 /**
- * @file PauseButton.java
+ * @file SaveButton.java
  * @author Joshua Crotts
- * @date August 30 2020
+ * @date September 1 2020
  * @version 1.0
  *
  * @section LICENSE
@@ -14,9 +14,9 @@
  * @section DESCRIPTION
  *
  */
-package com.joshuacrotts.ui;
+package com.joshuacrotts.ui.model;
 
-import com.joshuacrotts.main.DatabaseTranslator;
+import com.joshuacrotts.database.DatabaseTranslator;
 import com.joshuacrotts.main.GameOfLife;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;

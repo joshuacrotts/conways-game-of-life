@@ -16,7 +16,7 @@
  */
 package com.joshuacrotts.main;
 
-import com.joshuacrotts.ui.GridSizePrompt;
+import com.joshuacrotts.ui.model.GridSizePrompt;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import javax.swing.JFrame;

@@ -52,8 +52,8 @@ public class GridPanel extends JPanel implements MouseListener {
    *
    */
   public void updateGame() {
-    for (int i = 0; i < this.readGrid.length; i++) {
-      for (int j = 0; j < this.readGrid[0].length; j++) {
+    for (int i = 0; i < this.readGrid.length; i ++) {
+      for (int j = 0; j < this.readGrid[0].length; j ++) {
         this.applyRule(i, j);
       }
     }
@@ -61,7 +61,7 @@ public class GridPanel extends JPanel implements MouseListener {
     // After every generation, we need to replace the 
     // grid we currently see with the one we just updated.
     this.readGrid = cloneArray(this.writeGrid);
-    this.generations++;
+    this.generations ++;
   }
 
   /**
@@ -74,20 +74,17 @@ public class GridPanel extends JPanel implements MouseListener {
 
     Graphics2D g2 = (Graphics2D) g;
 
-    for (int i = 0; i < this.readGrid.length; i++) {
-      for (int j = 0; j < this.readGrid[0].length; j++) {
-        g2.setColor(this.readGrid[i][j] == 1 ? Color.RED : Color.WHITE);
-        g2.fillRect(i * this.gridSize, j * this.gridSize, this.gridSize, this.gridSize);
-      }
-    }
-
     this.drawGrid(g2);
+    this.drawGridOutline(g2);
   }
 
   /**
+   * Ensures that we input a grid size that doesn't leak outside the panel size.
+   * This should be a multiple of the window size.
    *
    * @param gridSize
-   * @throws IllegalArgumentException
+   * @throws IllegalArgumentException if the number isn't a multiple of the
+   * window size.
    */
   public void validateGridSize(int gridSize) throws IllegalArgumentException {
     try {
@@ -111,11 +108,11 @@ public class GridPanel extends JPanel implements MouseListener {
   }
 
   /**
-   *
+   * Randomly assigns alive or dead cells to the grid.
    */
   public void randomizeGrid() {
-    for (int i = 0; i < this.readGrid.length; i++) {
-      for (int j = 0; j < this.readGrid[0].length; j++) {
+    for (int i = 0; i < this.readGrid.length; i ++) {
+      for (int j = 0; j < this.readGrid[0].length; j ++) {
         readGrid[i][j] = Math.random() > RANDOMIZE_FACTOR ? 1 : 0;
       }
     }
@@ -124,11 +121,11 @@ public class GridPanel extends JPanel implements MouseListener {
   }
 
   /**
-   *
+   * Removes all alive cells from the grid.
    */
   public void clearGrid() {
-    for (int i = 0; i < this.readGrid.length; i++) {
-      for (int j = 0; j < this.readGrid[0].length; j++) {
+    for (int i = 0; i < this.readGrid.length; i ++) {
+      for (int j = 0; j < this.readGrid[0].length; j ++) {
         readGrid[i][j] = 0;
       }
     }
@@ -137,7 +134,7 @@ public class GridPanel extends JPanel implements MouseListener {
   }
 
   /**
-   * Clones the provided array
+   * Clones the provided array.
    *
    * @param src
    * @return a new clone of the provided array
@@ -145,7 +142,7 @@ public class GridPanel extends JPanel implements MouseListener {
   public static int[][] cloneArray(int[][] src) {
     int length = src.length;
     int[][] target = new int[length][src[0].length];
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; i ++) {
       System.arraycopy(src[i], 0, target[i], 0, src[i].length);
     }
     return target;
@@ -182,10 +179,25 @@ public class GridPanel extends JPanel implements MouseListener {
   }
 
   /**
+   * Draws and colors the cells in the grid.
    *
    * @param g2
    */
   private void drawGrid(Graphics2D g2) {
+    for (int i = 0; i < this.readGrid.length; i ++) {
+      for (int j = 0; j < this.readGrid[0].length; j ++) {
+        g2.setColor(this.readGrid[i][j] == 1 ? Color.RED : Color.WHITE);
+        g2.fillRect(i * this.gridSize, j * this.gridSize, this.gridSize, this.gridSize);
+      }
+    }
+  }
+
+  /**
+   * Draws the gray grid on the background.
+   *
+   * @param g2
+   */
+  private void drawGridOutline(Graphics2D g2) {
     g2.setColor(Color.GRAY);
     // Vertical lines.
     for (int i = 0; i <= super.getWidth(); i += this.gridSize) {
@@ -199,6 +211,7 @@ public class GridPanel extends JPanel implements MouseListener {
   }
 
   /**
+   * Applies the rules to any generic cell.
    *
    * @param i
    * @param j
@@ -228,8 +241,9 @@ public class GridPanel extends JPanel implements MouseListener {
   }
 
   /**
+   * Updates a cell based on its number of neighbors
    *
-   * @param sum
+   * @param sum number of neighbors.
    * @param i
    * @param j
    */
@@ -250,6 +264,7 @@ public class GridPanel extends JPanel implements MouseListener {
   }
 
   /**
+   * Applies the rules to a corner cell.
    *
    * @param i
    * @param j
@@ -257,7 +272,7 @@ public class GridPanel extends JPanel implements MouseListener {
    * @param isTopRight
    * @param isBottomLeft
    * @param isBottomRight
-   * @return
+   * @return true if we update a corner cell, false otherwise.
    */
   private boolean applyToCornerCells(int i, int j, boolean isTopLeft, boolean isTopRight,
           boolean isBottomLeft, boolean isBottomRight) {
@@ -279,6 +294,7 @@ public class GridPanel extends JPanel implements MouseListener {
   }
 
   /**
+   * Applies the rules to an edge cell.
    *
    * @param i
    * @param j
@@ -286,7 +302,7 @@ public class GridPanel extends JPanel implements MouseListener {
    * @param isRight
    * @param isTop
    * @param isBottom
-   * @return
+   * @return true if we updated an edge cell, false otherwise.
    */
   private boolean applyToEdgeCells(int i, int j, boolean isLeft, boolean isRight,
           boolean isTop, boolean isBottom) {
@@ -310,13 +326,21 @@ public class GridPanel extends JPanel implements MouseListener {
   public int getGeneration() {
     return this.generations;
   }
-  
+
   public int[][] getGrid() {
     return this.readGrid;
   }
-  
+
   public void setGrid(int[][] grid) {
     this.readGrid = grid;
     this.writeGrid = cloneArray(this.readGrid);
+  }
+
+  public void setGridSize(int gridSize) {
+    this.gridSize = gridSize;
+  }
+
+  public int getGridSize() {
+    return this.gridSize;
   }
 }

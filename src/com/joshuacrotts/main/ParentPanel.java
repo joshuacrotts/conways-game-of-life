@@ -36,7 +36,7 @@ public class ParentPanel extends JPanel {
 
     super.setLayout(new BorderLayout());
     super.add(this.gridPanel, BorderLayout.CENTER);
-    super.add(this.uiPanel, BorderLayout.NORTH);
+    super.add(this.uiPanel, BorderLayout.PAGE_START);
   }
 
   /**

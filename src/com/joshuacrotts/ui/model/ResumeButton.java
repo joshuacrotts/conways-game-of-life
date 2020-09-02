@@ -1,5 +1,5 @@
 /**
- * @file PauseButton.java
+ * @file ResumeButton.java
  * @author Joshua Crotts
  * @date August 30 2020
  * @version 1.0
@@ -14,7 +14,7 @@
  * @section DESCRIPTION
  *
  */
-package com.joshuacrotts.ui;
+package com.joshuacrotts.ui.model;
 
 import com.joshuacrotts.main.GameOfLife;
 import java.awt.Graphics;
@@ -22,21 +22,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 
-public class PauseButton extends JButton implements ActionListener {
+public class ResumeButton extends JButton implements ActionListener {
 
   private final GameOfLife gameOfLife;
   
-  public PauseButton(GameOfLife gol) {
-    super("PAUSE");
+  public ResumeButton(GameOfLife gol) {
+    super("RESUME");
     this.gameOfLife = gol;
-    
+
     super.addActionListener(this);
-    super.setEnabled(false);
+    super.setEnabled(true);
   }
 
   @Override
   public void actionPerformed(ActionEvent ex) {
-    this.gameOfLife.setPaused(true);
+    this.gameOfLife.setPaused(false);
   }
 
   @Override
