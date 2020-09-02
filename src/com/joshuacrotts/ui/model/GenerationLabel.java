@@ -18,14 +18,16 @@ package com.joshuacrotts.ui.model;
 
 import com.joshuacrotts.main.GameOfLife;
 import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 public class GenerationLabel extends JLabel {
 
   private final GameOfLife gameOfLife;
 
   public GenerationLabel(GameOfLife gameOfLife) {
-    super("Generation: 0");
-
+    super("Generation: 0", SwingConstants.CENTER);
+    super.setOpaque(true);
+    
     this.gameOfLife = gameOfLife;
   }
 

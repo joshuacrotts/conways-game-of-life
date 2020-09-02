@@ -16,6 +16,7 @@
  */
 package com.joshuacrotts.main;
 
+import com.joshuacrotts.ui.model.PopUpMenuController;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -30,20 +31,30 @@ public class GridPanel extends JPanel implements MouseListener {
   // Parent game panel.
   private final GameOfLife gameOfLife;
 
+  // Right click menu.
+  private final PopUpMenuController popup;
+
   // Randomization factor (how populated the grid is upon startup.
   private final double RANDOMIZE_FACTOR = 0.90;
 
   private final int DEFAULT_GRID_SIZE = 6;
 
+  // Grid information.
   private int[][] readGrid;
   private int[][] writeGrid;
   private int gridSize;
 
+  // Number of generations.
   private int generations;
+
+  // Boolean to draw the grid or not.
+  private boolean shouldDrawGrid = true;
 
   public GridPanel(GameOfLife life) {
     this.gameOfLife = life;
     this.gridSize = this.DEFAULT_GRID_SIZE;
+
+    this.popup = new PopUpMenuController(this);
 
     super.addMouseListener(this);
   }
@@ -52,8 +63,8 @@ public class GridPanel extends JPanel implements MouseListener {
    *
    */
   public void updateGame() {
-    for (int i = 0; i < this.readGrid.length; i ++) {
-      for (int j = 0; j < this.readGrid[0].length; j ++) {
+    for (int i = 0; i < this.readGrid.length; i++) {
+      for (int j = 0; j < this.readGrid[0].length; j++) {
         this.applyRule(i, j);
       }
     }
@@ -61,7 +72,7 @@ public class GridPanel extends JPanel implements MouseListener {
     // After every generation, we need to replace the 
     // grid we currently see with the one we just updated.
     this.readGrid = cloneArray(this.writeGrid);
-    this.generations ++;
+    this.generations++;
   }
 
   /**
@@ -75,7 +86,10 @@ public class GridPanel extends JPanel implements MouseListener {
     Graphics2D g2 = (Graphics2D) g;
 
     this.drawGrid(g2);
-    this.drawGridOutline(g2);
+
+    if (this.shouldDrawGrid()) {
+      this.drawGridOutline(g2);
+    }
   }
 
   /**
@@ -111,8 +125,8 @@ public class GridPanel extends JPanel implements MouseListener {
    * Randomly assigns alive or dead cells to the grid.
    */
   public void randomizeGrid() {
-    for (int i = 0; i < this.readGrid.length; i ++) {
-      for (int j = 0; j < this.readGrid[0].length; j ++) {
+    for (int i = 0; i < this.readGrid.length; i++) {
+      for (int j = 0; j < this.readGrid[0].length; j++) {
         readGrid[i][j] = Math.random() > RANDOMIZE_FACTOR ? 1 : 0;
       }
     }
@@ -124,8 +138,8 @@ public class GridPanel extends JPanel implements MouseListener {
    * Removes all alive cells from the grid.
    */
   public void clearGrid() {
-    for (int i = 0; i < this.readGrid.length; i ++) {
-      for (int j = 0; j < this.readGrid[0].length; j ++) {
+    for (int i = 0; i < this.readGrid.length; i++) {
+      for (int j = 0; j < this.readGrid[0].length; j++) {
         readGrid[i][j] = 0;
       }
     }
@@ -142,7 +156,7 @@ public class GridPanel extends JPanel implements MouseListener {
   public static int[][] cloneArray(int[][] src) {
     int length = src.length;
     int[][] target = new int[length][src[0].length];
-    for (int i = 0; i < length; i ++) {
+    for (int i = 0; i < length; i++) {
       System.arraycopy(src[i], 0, target[i], 0, src[i].length);
     }
     return target;
@@ -184,8 +198,8 @@ public class GridPanel extends JPanel implements MouseListener {
    * @param g2
    */
   private void drawGrid(Graphics2D g2) {
-    for (int i = 0; i < this.readGrid.length; i ++) {
-      for (int j = 0; j < this.readGrid[0].length; j ++) {
+    for (int i = 0; i < this.readGrid.length; i++) {
+      for (int j = 0; j < this.readGrid[0].length; j++) {
         g2.setColor(this.readGrid[i][j] == 1 ? Color.RED : Color.WHITE);
         g2.fillRect(i * this.gridSize, j * this.gridSize, this.gridSize, this.gridSize);
       }
@@ -342,5 +356,13 @@ public class GridPanel extends JPanel implements MouseListener {
 
   public int getGridSize() {
     return this.gridSize;
+  }
+
+  public boolean shouldDrawGrid() {
+    return this.shouldDrawGrid;
+  }
+
+  public void setDrawGrid(boolean b) {
+    this.shouldDrawGrid = b;
   }
 }
