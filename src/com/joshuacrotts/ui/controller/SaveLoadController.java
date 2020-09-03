@@ -23,10 +23,6 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import javax.swing.JPanel;
 
-/**
- *
- * @author Joshua
- */
 public class SaveLoadController extends JPanel {
   
   private final GameOfLife gameOfLife;

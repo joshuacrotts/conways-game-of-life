@@ -41,12 +41,14 @@ public class PersistentDatabase implements Database {
       writer = new BufferedWriter(new FileWriter(fileName));
       int[][] grid = gridPanel.getGrid();
 
-      // Write the row, column, and grid size totals.
+      // Write the row, column, grid size, and generation.
       writer.write(grid.length + "");
       writer.newLine();
       writer.write(grid[0].length + "");
       writer.newLine();
       writer.write(gridPanel.getGridSize() + "");
+      writer.newLine();
+      writer.write(gridPanel.getGeneration() + "");
       writer.newLine();
 
       // Read the bits into the StringBuilder and then at the end we'll
@@ -86,6 +88,7 @@ public class PersistentDatabase implements Database {
       int rows = Integer.parseInt(reader.readLine());
       int cols = Integer.parseInt(reader.readLine());
       int gridSize = Integer.parseInt(reader.readLine());
+      int generation = Integer.parseInt(reader.readLine());
 
       int[][] grid = new int[rows][cols];
 
@@ -96,6 +99,7 @@ public class PersistentDatabase implements Database {
         }
       }
 
+      gridPanel.setGeneration(generation);
       gridPanel.setGridSize(gridSize);
       gridPanel.setGrid(grid);
 

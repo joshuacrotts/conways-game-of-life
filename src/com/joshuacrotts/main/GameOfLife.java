@@ -39,8 +39,8 @@ public class GameOfLife {
   // JFrame dimensions and framerate variables.
   private static final String TITLE = "Conway's Game of Life";
   private static final int RENDER_FRAMERATE = 17; // Milliseconds.
-  private static int screenWidth = 800;
-  private static int screenHeight = 800;
+  private static final int screenWidth = 800;
+  private static final int screenHeight = 800;
   private static int framerate = 200; // Milliseconds.
 
   public GameOfLife() {

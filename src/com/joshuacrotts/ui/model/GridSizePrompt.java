@@ -37,8 +37,6 @@ public class GridSizePrompt {
    * @return 
    */
   public static int promptGridSize(GameOfLife gameOfLife) {
-    //TreeSet<Integer> possibleGridSizes = gameOfLife.getParentPanel().getGridPanel().getPossibleGridSizes();
-
     return Integer.parseInt(JOptionPane.showInputDialog(gameOfLife.getFrame(),
             "Enter a cell size: "));
   }

@@ -22,7 +22,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
@@ -61,7 +60,7 @@ public class GridPanel extends JPanel {
   }
 
   /**
-   *
+   * Updates the grid and applies the grid rules to each cell.
    */
   public void updateGame() {
     for (int i = 0; i < this.readGrid.length; i++) {
@@ -77,7 +76,8 @@ public class GridPanel extends JPanel {
   }
 
   /**
-   *
+   * Draws the grid and the grid outline if selected in the context menu.
+   * 
    * @param g
    */
   @Override
@@ -310,6 +310,10 @@ public class GridPanel extends JPanel {
 
   public int getGeneration() {
     return this.generations;
+  }
+  
+  public void setGeneration(int g) {
+    this.generations = g;
   }
 
   public int[][] getGrid() {
